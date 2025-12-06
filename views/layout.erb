@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cistercian Numerals</title>
+  <script src="https://unpkg.com/htmx.org@2.0.8"></script>
+  <script src="https://unpkg.com/idiomorph@0.7.4/dist/idiomorph-ext.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      color: #f5f0e6;
+      text-shadow: 0 0 12px rgba(245, 240, 230, 0.25);
+    }
+    input {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.5rem;
+      border: 2px solid #4a4a6a;
+      border-radius: 8px;
+      background: #2a2a4e;
+      color: #eee;
+    }
+    input.hidden-text {
+      -webkit-text-security: disc;
+      text-security: disc;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #7a7aaa;
+      box-shadow: 0 0 8px rgba(122, 122, 170, 0.3);
+    }
+    .controls {
+      position: relative;
+    }
+    .toggle {
+      position: absolute;
+      top: -3rem;
+      width: 56px;
+      height: 30px;
+      cursor: pointer;
+    }
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #4a4a6a;
+      border-radius: 24px;
+      transition: background 0.2s;
+    }
+    .slider::before {
+      position: absolute;
+      height: 24px;
+      width: 24px;
+      left: 3px;
+      bottom: 3px;
+      background: #f5f0e6;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      font-size: 14px;
+      line-height: 24px;
+      text-align: center;
+    }
+    .toggle-left .slider::before {
+      content: '\1F648';
+    }
+    .toggle-right .slider::before {
+      content: '\1F522';
+    }
+    .toggle input:checked + .slider {
+      background: #7a7aaa;
+    }
+    .toggle input:checked + .slider::before {
+      transform: translateX(26px);
+    }
+    .toggle-left {
+      left: 0;
+    }
+    .toggle-right {
+      right: 0;
+    }
+    #numerals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      justify-content: center;
+    }
+    @keyframes focus-in {
+      from { opacity: 0; transform: translateX(25px) scale(0.9); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    figure {
+      margin: 0;
+      text-align: center;
+      animation: focus-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    figure svg {
+      width: 100px;
+      height: 110px;
+      border-radius: 8px;
+    }
+    figcaption {
+      margin-top: 0.5rem;
+      font-size: 1.2rem;
+      color: #aaa;
+    }
+    .empty {
+      color: #666;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body hx-ext="morph">
+<%= yield %>
+</body>
+</html>

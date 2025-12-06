@@ -1,0 +1,42 @@
+<h1>Cistercian Numerals</h1>
+
+<div class="controls">
+  <label class="toggle toggle-left">
+    <input type="checkbox" id="hide_input" onchange="toggleInputType()">
+    <span class="slider"></span>
+  </label>
+  <input
+    type="text"
+    name="input"
+    id="number_input"
+    placeholder="Type numbers separated by any character (0-9999)..."
+    hx-post="/numerals"
+    hx-trigger="input changed delay:100ms"
+    hx-target="#numerals"
+    hx-swap="morph:innerHTML"
+    hx-include="[name='show_arabic']"
+    autocomplete="one-time-code"
+    data-form-type="other"
+    data-lpignore="true"
+    autofocus
+  >
+  <label class="toggle toggle-right">
+    <input type="checkbox" name="show_arabic" value="1" checked
+      hx-post="/numerals"
+      hx-trigger="change"
+      hx-target="#numerals"
+      hx-swap="morph:innerHTML"
+      hx-include="[name='input']"
+    >
+    <span class="slider"></span>
+  </label>
+</div>
+<script>
+  function toggleInputType() {
+    const input = document.getElementById('number_input');
+    const hide = document.getElementById('hide_input').checked;
+    input.classList.toggle('hidden-text', hide);
+  }
+</script>
+
+<div id="numerals"></div>
