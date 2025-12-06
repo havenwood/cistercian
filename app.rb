@@ -14,9 +14,9 @@ class App < Roda
 
     router.post 'numerals' do
       input = router.params['input'] || ''
-      show_arabic = router.params['show_arabic'] == '1'
+      secret_mode = router.params['secret_mode'] == '1'
       numbers = extract_numbers(input)
-      render_numerals(numbers, show_arabic:)
+      render_numerals(numbers, secret_mode:)
     end
   end
 
@@ -30,11 +30,11 @@ class App < Roda
     digits.scan(/.{1,4}/).map(&:to_i)
   end
 
-  def render_numerals(numbers, show_arabic:)
+  def render_numerals(numbers, secret_mode:)
     return '' if numbers.empty?
 
     numbers.map.with_index do |num, index|
-      caption = show_arabic ? "<figcaption>#{num}</figcaption>" : ''
+      caption = secret_mode ? '' : "<figcaption>#{num}</figcaption>"
       <<~HTML
         <figure id="fig-#{index}">
           #{CistercianSVG.svg(num)}
