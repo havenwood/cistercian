@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'roda'
-require_relative '../cistercian_svg'
+require_relative 'cistercian_svg'
 
 class App < Roda
   plugin :direct_call
