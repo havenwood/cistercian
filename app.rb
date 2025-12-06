@@ -27,7 +27,20 @@ class App < Roda
   end
 
   def chunk_digits(digits)
-    digits.scan(/.{1,4}/).map(&:to_i)
+    # Extract leading zeros from the entire input first
+    leading_zeros_count = digits.match(/^0*/)[0].length
+    remainder = digits.sub(/^0+/, '')
+
+    leading_zeros = Array.new(leading_zeros_count, 0)
+    return leading_zeros if remainder.empty?
+
+    # Zeros act as separators; non-zero sequences chunk up to 4 digits
+    parts = remainder.scan(/0+|[1-9]\d{0,3}/)
+    expanded = parts.flat_map do |part|
+      part.match?(/^0+$/) ? Array.new(part.length, 0) : [part.to_i]
+    end
+
+    leading_zeros + expanded
   end
 
   def render_numerals(numbers, secret_mode:)
