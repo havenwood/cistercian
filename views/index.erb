@@ -45,6 +45,13 @@
     const input = document.getElementById('number_input');
     const secretMode = document.querySelector('[name="secret_mode"]');
 
+    // Move cursor to end of initial value
+    if (input.value) {
+      requestAnimationFrame(() => {
+        input.setSelectionRange(input.value.length, input.value.length);
+      });
+    }
+
     // Prevent toggle from stealing focus
     secretMode.parentElement.addEventListener('mousedown', (event) => {
       event.preventDefault();
