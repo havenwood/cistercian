@@ -192,7 +192,7 @@
       view-transition-name: numerals-grid;
     }
     #numerals:has(figure:only-child) {
-      grid-template-columns: 150px;
+      grid-template-columns: min(calc(50% - 0.5rem), 200px);
       justify-content: center;
     }
     ::view-transition-old(numerals-grid),
