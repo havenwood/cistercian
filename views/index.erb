@@ -1,6 +1,6 @@
 <h1>Cistercian Numerals</h1>
 
-<div class="controls">
+<search class="controls">
   <input
     type="text"
     name="input"
@@ -28,7 +28,7 @@
     >
     <span class="slider"></span>
   </label>
-</div>
+</search>
 <script>
   function toggleSecretMode() {
     const input = document.getElementById('number_input');
@@ -54,4 +54,4 @@
   });
 </script>
 
-<div id="numerals"><%= @initial_numerals %></div>
+<main id="numerals"><%= @initial_numerals %></main>
