@@ -46,6 +46,12 @@
     const input = document.getElementById('number_input');
     const secretMode = document.querySelector('[name="secret_mode"]');
 
+    // Reduce iOS Safari scroll jank on touch devices
+    if (window.matchMedia('(pointer: coarse)').matches) {
+      input.setAttribute('hx-trigger', 'input changed delay:400ms');
+      htmx.process(input);
+    }
+
     // Move cursor to end of initial value (once)
     if (input.value) {
       const moveCursorToEnd = () => {
