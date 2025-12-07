@@ -6,6 +6,7 @@ require_relative 'cistercian_svg'
 class App < Roda
   plugin :direct_call
   plugin :render
+  plugin :class_matchers
 
   route do |router|
     router.root do
@@ -17,6 +18,19 @@ class App < Roda
                             render_numerals(numbers, secret_mode: false)
                           end
       view 'index'
+    end
+
+    router.on 'svg' do
+      router.is String do |filename|
+        next unless (match = filename.match(/\A(\d+)\.svg\z/))
+
+        number = match[1].to_i
+        next unless (0..9999).cover?(number)
+
+        response['Content-Type'] = 'image/svg+xml'
+        response['Content-Disposition'] = "inline; filename=\"cistercian-#{number}.svg\""
+        CistercianSVG.svg(number)
+      end
     end
 
     router.post 'numerals' do
@@ -62,7 +76,7 @@ class App < Roda
       caption = secret_mode ? '' : "<figcaption>#{num}</figcaption>"
       <<~HTML
         <figure id="fig-#{index}">
-          #{CistercianSVG.svg(num)}
+          <img src="/svg/#{num}.svg" alt="Cistercian numeral for #{num}">
           #{caption}
         </figure>
       HTML
