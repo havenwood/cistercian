@@ -31,7 +31,7 @@ class App < Roda
 
         response['Content-Type'] = 'image/svg+xml'
         response['Content-Disposition'] = "inline; filename=\"cistercian-#{number}.svg\""
-        response['Cache-Control'] = 'public, max-age=3600'
+        response['Cache-Control'] = 'public, max-age=14400'
         CistercianSVG.svg(number)
       end
     end
