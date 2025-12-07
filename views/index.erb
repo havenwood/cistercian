@@ -1,22 +1,27 @@
 <h1>Cistercian Numerals</h1>
 
 <search class="controls">
-  <input
-    type="text"
-    name="input"
-    id="number_input"
-    value="<%= @initial_input %>"
-    placeholder="Numerals 0-9999..."
-    hx-post="/numerals"
-    hx-trigger="input changed delay:100ms"
-    hx-target="#numerals"
-    hx-swap="morph:innerHTML transition:true"
-    hx-include="[name='secret_mode']"
-    autocomplete="one-time-code"
-    data-form-type="other"
-    data-lpignore="true"
-    autofocus
-  >
+  <div class="input-wrapper">
+    <div id="input_backdrop" aria-hidden="true"><%= @initial_backdrop %></div>
+    <input
+      type="text"
+      name="input"
+      id="number_input"
+      value="<%= @initial_input %>"
+      placeholder="Numerals 0-9999..."
+      hx-post="/numerals"
+      hx-trigger="input changed delay:100ms"
+      hx-target="#numerals"
+      hx-swap="morph:innerHTML transition:true"
+      hx-include="[name='secret_mode']"
+      autocomplete="one-time-code"
+      data-form-type="other"
+      data-lpignore="true"
+      spellcheck="false"
+      autofocus
+      oninput="updateBackdrop()"
+    >
+  </div>
   <label class="toggle toggle-right">
     <input type="checkbox" name="secret_mode" value="1"
       hx-post="/numerals"

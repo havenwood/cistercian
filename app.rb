@@ -11,12 +11,14 @@ class App < Roda
   route do |router|
     router.root do
       @initial_input = router.params['n'] || ''
-      @initial_numerals = if @initial_input.empty?
-                            ''
-                          else
-                            numbers = extract_numbers(@initial_input)
-                            render_numerals(numbers, secret_mode: false)
-                          end
+      if @initial_input.empty?
+        @initial_numerals = ''
+        @initial_backdrop = ''
+      else
+        numbers = extract_numbers(@initial_input)
+        @initial_numerals = render_numerals(numbers, secret_mode: false)
+        @initial_backdrop = render_backdrop(@initial_input, secret_mode: false)
+      end
       view 'index'
     end
 
@@ -43,7 +45,13 @@ class App < Roda
       url = input.empty? ? '/' : "/?n=#{URI.encode_www_form_component(input)}"
       response['HX-Replace-Url'] = url
 
-      render_numerals(numbers, secret_mode:)
+      numerals = render_numerals(numbers, secret_mode:)
+      backdrop = render_backdrop(input, secret_mode:)
+
+      <<~HTML
+        #{numerals}
+        <div id="input_backdrop" hx-swap-oob="true" aria-hidden="true">#{backdrop}</div>
+      HTML
     end
   end
 
@@ -82,5 +90,24 @@ class App < Roda
         </figure>
       HTML
     end.join
+  end
+
+  def render_backdrop(input, secret_mode:)
+    return '' if input.empty?
+
+    chunk_index = 0
+    input.gsub(/(\d+)|([^\d]+)/) do
+      if (digits = ::Regexp.last_match(1))
+        chunks = chunk_digits(digits)
+        chunks.map do |chunk|
+          display = secret_mode ? '•' * chunk.to_s.length : chunk
+          style = (chunk_index += 1).odd? ? 'num-a' : 'num-b'
+          %(<span class="#{style}">#{display}</span>)
+        end.join
+      else
+        sep = ::Regexp.last_match(2)
+        %(<span class="sep">#{sep}</span>)
+      end
+    end
   end
 end
