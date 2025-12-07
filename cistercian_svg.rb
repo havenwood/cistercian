@@ -33,7 +33,7 @@ module CistercianSVG
   def svg(number)
     raise ArgumentError, 'Must be 0-9999' unless (0..9999).cover?(number)
 
-    wrap(glyph_lines(number))
+    wrap(number:, content: glyph_lines(number))
   end
 
   def glyph_lines(number)
@@ -57,10 +57,11 @@ module CistercianSVG
     %(<line x1="#{from_x}" y1="#{from_y}" x2="#{to_x}" y2="#{to_y}"/>)
   end
 
-  def wrap(content)
+  def wrap(number:, content:)
     height = PAD + H * 2 + GAP + PAD
     <<~SVG
-      <svg viewBox="0 0 100 #{height}" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 100 #{height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+        <title id="title">Cistercian numeral for #{number}</title>
         <rect width="100" height="#{height}" fill="#f5f0e6"/>
         <g stroke="#2c1810" stroke-width="5" stroke-linecap="round">
       #{content.gsub(/^/, '    ')}
