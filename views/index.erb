@@ -5,6 +5,7 @@
     type="text"
     name="input"
     id="number_input"
+    value="<%= @initial_input %>"
     placeholder="Type numbers separated by any character (0-9999)..."
     hx-post="/numerals"
     hx-trigger="input changed delay:100ms"
@@ -34,6 +35,14 @@
     const secret = document.querySelector('[name="secret_mode"]').checked;
     input.classList.toggle('hidden-text', secret);
   }
+
+  // Trigger initial render if there's a value from URL
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('number_input');
+    if (input.value) {
+      htmx.trigger(input, 'input');
+    }
+  });
 </script>
 
 <div id="numerals"></div>

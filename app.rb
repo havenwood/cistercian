@@ -9,6 +9,7 @@ class App < Roda
 
   route do |router|
     router.root do
+      @initial_input = router.params['n'] || ''
       view 'index'
     end
 
@@ -16,6 +17,11 @@ class App < Roda
       input = router.params['input'] || ''
       secret_mode = router.params['secret_mode'] == '1'
       numbers = extract_numbers(input)
+
+      # Update browser URL without adding history entry
+      url = input.empty? ? '/' : "/?n=#{URI.encode_www_form_component(input)}"
+      response['HX-Replace-Url'] = url
+
       render_numerals(numbers, secret_mode:)
     end
   end

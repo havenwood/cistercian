@@ -108,4 +108,34 @@ class AppTest < Minitest::Test
     assert last_response.ok?
     assert_includes last_response.body, 'Cistercian Numerals'
   end
+
+  def test_url_parameter_prefills_input
+    get '/?n=1234'
+    assert last_response.ok?
+    assert_includes last_response.body, 'value="1234"'
+  end
+
+  def test_url_parameter_handles_encoded_characters
+    get '/?n=1%202%203'
+    assert last_response.ok?
+    assert_includes last_response.body, 'value="1 2 3"'
+  end
+
+  def test_post_returns_hx_replace_url_header
+    post '/numerals', input: '1234'
+    assert last_response.ok?
+    assert_equal '/?n=1234', last_response.headers['HX-Replace-Url']
+  end
+
+  def test_post_empty_input_returns_root_url
+    post '/numerals', input: ''
+    assert last_response.ok?
+    assert_equal '/', last_response.headers['HX-Replace-Url']
+  end
+
+  def test_post_encodes_special_characters_in_url
+    post '/numerals', input: '1 2 3'
+    assert last_response.ok?
+    assert_equal '/?n=1+2+3', last_response.headers['HX-Replace-Url']
+  end
 end
