@@ -36,12 +36,21 @@
     input.classList.toggle('hidden-text', secret);
   }
 
-  // Trigger initial render if there's a value from URL
   document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('number_input');
+
+    // Trigger initial render if there's a value from URL
     if (input.value) {
       htmx.trigger(input, 'input');
     }
+
+    // Escape key clears input
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        input.value = '';
+        htmx.trigger(input, 'input');
+      }
+    });
   });
 </script>
 
