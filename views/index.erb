@@ -6,11 +6,11 @@
     name="input"
     id="number_input"
     value="<%= @initial_input %>"
-    placeholder="Type numbers separated by any character (0-9999)..."
+    placeholder="Numerals 0-9999..."
     hx-post="/numerals"
     hx-trigger="input changed delay:100ms"
     hx-target="#numerals"
-    hx-swap="morph:innerHTML"
+    hx-swap="morph:innerHTML transition:true"
     hx-include="[name='secret_mode']"
     autocomplete="one-time-code"
     data-form-type="other"
@@ -22,7 +22,7 @@
       hx-post="/numerals"
       hx-trigger="change"
       hx-target="#numerals"
-      hx-swap="morph:innerHTML"
+      hx-swap="morph:innerHTML transition:true"
       hx-include="[name='input']"
       onchange="toggleSecretMode()"
     >
@@ -46,7 +46,7 @@
         input.value = '';
         htmx.ajax('POST', '/numerals', {
           target: '#numerals',
-          swap: 'morph:innerHTML',
+          swap: 'morph:innerHTML transition:true',
           values: { input: '', secret_mode: secretMode.checked ? '1' : '0' }
         });
       }
