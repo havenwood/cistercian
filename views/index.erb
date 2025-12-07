@@ -61,6 +61,22 @@
       }
     }
 
+    // Restore cursor position after HTMX swaps (iOS Safari fix)
+    let savedSelection = null;
+    document.body.addEventListener('htmx:beforeSwap', () => {
+      if (document.activeElement === input) {
+        savedSelection = { start: input.selectionStart, end: input.selectionEnd };
+      }
+    });
+    document.body.addEventListener('htmx:afterSwap', () => {
+      if (savedSelection && document.activeElement === input) {
+        requestAnimationFrame(() => {
+          input.setSelectionRange(savedSelection.start, savedSelection.end);
+          savedSelection = null;
+        });
+      }
+    });
+
     // Prevent toggle from stealing focus
     secretMode.parentElement.addEventListener('mousedown', (event) => {
       event.preventDefault();
