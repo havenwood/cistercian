@@ -55,11 +55,13 @@
     // Move cursor to end of initial value (once)
     if (input.value) {
       const moveCursorToEnd = () => {
-        input.setSelectionRange(input.value.length, input.value.length);
+        setTimeout(() => {
+          input.setSelectionRange(input.value.length, input.value.length);
+        }, 0);
         input.removeEventListener('focus', moveCursorToEnd);
       };
       if (document.activeElement === input) {
-        requestAnimationFrame(moveCursorToEnd);
+        moveCursorToEnd();
       } else {
         input.addEventListener('focus', moveCursorToEnd);
       }
