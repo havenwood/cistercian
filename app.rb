@@ -102,7 +102,8 @@ class App < Roda
         chunks.map do |chunk|
           display = secret_mode ? '•' * chunk.to_s.length : chunk
           style = (chunk_index += 1).odd? ? 'num-a' : 'num-b'
-          %(<span class="#{style}">#{display}</span>)
+          idx = chunk_index - 1
+          %(<span class="#{style}" data-chunk="#{idx}">#{display}</span>)
         end.join
       else
         sep = ::Regexp.last_match(2)

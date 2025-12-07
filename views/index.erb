@@ -56,6 +56,22 @@
         });
       }
     });
+
+    // Glow corresponding digits when clicking a numeral
+    document.getElementById('numerals').addEventListener('click', (e) => {
+      const figure = e.target.closest('figure');
+      if (figure) {
+        const index = figure.id.replace('fig-', '');
+        const span = document.querySelector(`#input_backdrop [data-chunk="${index}"]`);
+        if (span) {
+          span.classList.remove('glow');
+          // Force reflow to restart animation
+          void span.offsetWidth;
+          span.classList.add('glow');
+          span.onanimationend = () => span.classList.remove('glow');
+        }
+      }
+    });
   });
 </script>
 

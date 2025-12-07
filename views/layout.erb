@@ -12,7 +12,10 @@
       --bg-input: #2a2a4e;
       --border: #4a4a6a;
       --accent: #7a7aaa;
+      --accent-muted: rgba(122, 122, 170, 0.5);
+      --accent-glow: rgba(122, 122, 170, 0.3);
       --parchment: #f5f0e6;
+      --parchment-glow: rgba(245, 240, 230, 0.25);
       --accent-alt: rgba(255, 180, 200, 0.4);
       --text: #eee;
       --text-muted: #aaa;
@@ -31,7 +34,7 @@
       text-align: center;
       font-size: clamp(1.25rem, 4vw, 2rem);
       color: var(--parchment);
-      text-shadow: 0 0 12px rgba(245, 240, 230, 0.25);
+      text-shadow: 0 0 12px var(--parchment-glow);
     }
     .input-wrapper {
       position: relative;
@@ -59,7 +62,22 @@
     .input-wrapper input:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 8px rgba(122, 122, 170, 0.3);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    #input_backdrop span.glow {
+      animation: text-glow 2s ease-out;
+    }
+    @keyframes text-glow {
+      0% {
+        text-shadow: 0 0 8px var(--parchment), 0 0 16px var(--accent);
+        -webkit-filter: drop-shadow(0 0 4px var(--accent));
+        filter: drop-shadow(0 0 4px var(--accent));
+      }
+      100% {
+        text-shadow: none;
+        -webkit-filter: none;
+        filter: none;
+      }
     }
     #input_backdrop {
       position: absolute;
@@ -80,12 +98,12 @@
       color: var(--text);
       text-decoration-line: underline;
       text-decoration-style: dotted;
-      text-decoration-color: rgba(122, 122, 170, 0.5);
+      text-decoration-color: var(--accent-muted);
       text-decoration-thickness: 2px;
       text-underline-offset: 4px;
       -webkit-text-decoration-line: underline;
       -webkit-text-decoration-style: dotted;
-      -webkit-text-decoration-color: rgba(122, 122, 170, 0.5);
+      -webkit-text-decoration-color: var(--accent-muted);
     }
     #input_backdrop .num-b {
       color: var(--text);
