@@ -35,15 +35,34 @@
   </label>
 </search>
 <script>
+  let lastInputCursor = 0;
+  let inputWasFocused = false;
+
   function toggleSecretMode() {
     const input = document.getElementById('number_input');
     const secret = document.querySelector('[name="secret_mode"]').checked;
+
     input.classList.toggle('hidden-text', secret);
+    if (inputWasFocused) {
+      input.focus();
+      input.setSelectionRange(lastInputCursor, lastInputCursor);
+    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('number_input');
     const secretMode = document.querySelector('[name="secret_mode"]');
+
+    // Track cursor position continuously
+    const trackCursor = () => { lastInputCursor = input.selectionStart; };
+    input.addEventListener('keyup', trackCursor);
+    input.addEventListener('click', trackCursor);
+    input.addEventListener('input', trackCursor);
+
+    // Capture focus state before toggle click shifts focus
+    secretMode.parentElement.addEventListener('mousedown', () => {
+      inputWasFocused = document.activeElement === input;
+    });
 
     // Escape key clears input
     input.addEventListener('keydown', (e) => {
