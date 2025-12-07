@@ -19,7 +19,7 @@
     * { box-sizing: border-box; }
     body {
       font-family: system-ui, sans-serif;
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
       padding: clamp(1rem, 4vw, 2rem);
       background: var(--bg);
@@ -102,11 +102,10 @@
       right: 0;
     }
     #numerals {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
       gap: clamp(1rem, 3vw, 1.5rem);
       margin-top: clamp(1.5rem, 4vw, 2rem);
-      justify-content: center;
     }
     @keyframes focus-in {
       from { opacity: 0; transform: translateX(25px) scale(0.9); }
@@ -118,8 +117,8 @@
       animation: focus-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
     figure img {
-      width: clamp(80px, 15vw, 100px);
-      height: clamp(96px, 18vw, 120px);
+      width: 100%;
+      aspect-ratio: 100 / 120;
       border-radius: 8px;
     }
     figcaption {
