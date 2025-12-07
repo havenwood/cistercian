@@ -134,6 +134,16 @@
     #input_backdrop .sep {
       color: var(--text-muted);
     }
+    #input-hint {
+      display: block;
+      margin-top: 0.5rem;
+      padding-left: calc(clamp(0.75rem, 2vw, 1rem) + 2px);
+      color: var(--text-muted);
+      transition: opacity 2s ease-out;
+    }
+    #input-hint.faded {
+      opacity: 0;
+    }
     .controls {
       position: relative;
     }

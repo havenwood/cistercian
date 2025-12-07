@@ -8,11 +8,13 @@
       name="input"
       id="number_input"
       value="<%= @initial_input %>"
-      placeholder="Numerals 0-9999..."
+      placeholder="42,789,9999"
+      aria-describedby="input-hint"
       hx-post="/numerals"
       hx-trigger="input changed delay:100ms"
       hx-target="#numerals"
       hx-swap="morph:innerHTML transition:true"
+      hx-sync="this:replace"
       hx-include="[name='secret_mode']"
       autocomplete="one-time-code"
       autocorrect="off"
@@ -23,6 +25,7 @@
       autofocus
     >
   </div>
+  <small id="input-hint">Up to four digits per numeral, any separator</small>
   <label class="toggle toggle-right">
     <input type="checkbox" name="secret_mode" value="1"
       aria-label="Secret mode"
@@ -53,6 +56,12 @@
       htmx.process(input);
     }
 
+    // Fade hint after typing
+    const hint = document.getElementById('input-hint');
+    const updateHint = () => hint.classList.toggle('faded', input.value.length > 0);
+    input.addEventListener('input', updateHint);
+    updateHint();
+
     // Move cursor to end of initial value (once)
     if (input.value) {
       const moveCursorToEnd = () => {
@@ -77,6 +86,7 @@
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         input.value = '';
+        updateHint();
         htmx.ajax('POST', '/numerals', {
           target: '#numerals',
           swap: 'morph:innerHTML transition:true',
