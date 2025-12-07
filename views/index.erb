@@ -15,11 +15,12 @@
       hx-swap="morph:innerHTML transition:true"
       hx-include="[name='secret_mode']"
       autocomplete="one-time-code"
+      autocorrect="off"
+      autocapitalize="off"
       data-form-type="other"
       data-lpignore="true"
       spellcheck="false"
       autofocus
-      oninput="updateBackdrop()"
     >
   </div>
   <label class="toggle toggle-right">
@@ -35,13 +36,6 @@
   </label>
 </search>
 <script>
-  function updateBackdrop() {
-    const input = document.getElementById('number_input');
-    const backdrop = document.getElementById('input_backdrop');
-    // Show plain text while waiting for server to return styled version
-    backdrop.textContent = input.value;
-  }
-
   function toggleSecretMode() {
     const input = document.getElementById('number_input');
     const secret = document.querySelector('[name="secret_mode"]').checked;

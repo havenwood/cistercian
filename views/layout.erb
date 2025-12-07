@@ -44,15 +44,21 @@
       width: 100%;
       padding: clamp(0.75rem, 2vw, 1rem);
       font-family: ui-monospace, monospace;
-      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      font-size: max(16px, clamp(1.1rem, 2.5vw, 1.35rem));
       line-height: 1.4;
       border: 2px solid var(--border);
       border-radius: 8px;
       background: transparent;
       color: transparent;
       caret-color: var(--text);
+      white-space: pre;
+      overflow: hidden;
       position: relative;
       z-index: 1;
+      -webkit-appearance: none;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      touch-action: manipulation;
     }
     .input-wrapper input::placeholder {
       color: var(--text-muted);
@@ -89,13 +95,16 @@
       bottom: 0;
       padding: clamp(0.75rem, 2vw, 1rem);
       font-family: ui-monospace, monospace;
-      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      font-size: max(16px, clamp(1.1rem, 2.5vw, 1.35rem));
       line-height: 1.4;
+      border: 2px solid transparent;
       background: var(--bg-input);
       border-radius: 8px;
       pointer-events: none;
       white-space: pre;
       overflow: hidden;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
     #input_backdrop .num-a {
       color: var(--text);
