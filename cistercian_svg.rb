@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module CistercianSVG
-  H = 45   # quadrant height (width is 30)
-  GAP = 22 # vertical gap (~half of H for balanced proportions)
+  H = 36   # quadrant height (width is 30)
+  GAP = 24 # vertical gap (3:2:3 ratio for upper:gap:lower)
 
   # Each digit as line segments: [[x1, y1, x2, y2], ...]
   GLYPHS = [
@@ -18,12 +18,14 @@ module CistercianSVG
     [[0, 0, 30, 0], [30, 0, 30, H], [30, H, 0, H]] # 9: box open left
   ].freeze
 
+  PAD = 12 # vertical padding top and bottom
+
   # Quadrant transforms: {origin_x:, origin_y:, scale_x:, scale_y:}
   QUADRANTS = [
-    {origin_x: 50, origin_y: 10, scale_x: 1, scale_y: 1},                  # ones: top-right
-    {origin_x: 50, origin_y: 10, scale_x: -1, scale_y: 1},                 # tens: top-left
-    {origin_x: 50, origin_y: 10 + H * 2 + GAP, scale_x: 1, scale_y: -1},   # hundreds: bottom-right
-    {origin_x: 50, origin_y: 10 + H * 2 + GAP, scale_x: -1, scale_y: -1}   # thousands: bottom-left
+    {origin_x: 50, origin_y: PAD, scale_x: 1, scale_y: 1},                    # ones: top-right
+    {origin_x: 50, origin_y: PAD, scale_x: -1, scale_y: 1},                   # tens: top-left
+    {origin_x: 50, origin_y: PAD + H * 2 + GAP, scale_x: 1, scale_y: -1},     # hundreds: bottom-right
+    {origin_x: 50, origin_y: PAD + H * 2 + GAP, scale_x: -1, scale_y: -1}     # thousands: bottom-left
   ].freeze
 
   module_function
@@ -49,14 +51,14 @@ module CistercianSVG
     end
   end
 
-  def stem = %(<line x1="50" y1="10" x2="50" y2="#{10 + H * 2 + GAP}"/>)
+  def stem = %(<line x1="50" y1="#{PAD}" x2="50" y2="#{PAD + H * 2 + GAP}"/>)
 
   def line(from_x:, from_y:, to_x:, to_y:)
     %(<line x1="#{from_x}" y1="#{from_y}" x2="#{to_x}" y2="#{to_y}"/>)
   end
 
   def wrap(content)
-    height = 10 + H * 2 + GAP + 10
+    height = PAD + H * 2 + GAP + PAD
     <<~SVG
       <svg viewBox="0 0 100 #{height}" xmlns="http://www.w3.org/2000/svg">
         <rect width="100" height="#{height}" fill="#f5f0e6"/>
