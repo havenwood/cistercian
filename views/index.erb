@@ -35,6 +35,13 @@
   </label>
 </search>
 <script>
+  function updateBackdrop() {
+    const input = document.getElementById('number_input');
+    const backdrop = document.getElementById('input_backdrop');
+    // Show plain text while waiting for server to return styled version
+    backdrop.textContent = input.value;
+  }
+
   function toggleSecretMode() {
     const input = document.getElementById('number_input');
     const secret = document.querySelector('[name="secret_mode"]').checked;
