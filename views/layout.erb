@@ -12,20 +12,22 @@
       font-family: system-ui, sans-serif;
       max-width: 800px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 1rem;
       background: #1a1a2e;
       color: #eee;
       min-height: 100vh;
     }
     h1 {
       text-align: center;
+      font-size: 1.25rem;
       color: #f5f0e6;
       text-shadow: 0 0 12px rgba(245, 240, 230, 0.25);
+      margin-right: 3.5rem;
     }
     input {
       width: 100%;
-      padding: 1rem;
-      font-size: 1.5rem;
+      padding: 0.75rem;
+      font-size: 1.2rem;
       border: 2px solid #4a4a6a;
       border-radius: 8px;
       background: #2a2a4e;
@@ -45,9 +47,9 @@
     }
     .toggle {
       position: absolute;
-      top: -3rem;
-      width: 56px;
-      height: 30px;
+      top: -2.5rem;
+      width: 60px;
+      height: 34px;
       cursor: pointer;
     }
     .toggle input {
@@ -64,15 +66,15 @@
     }
     .slider::before {
       position: absolute;
-      height: 24px;
-      width: 24px;
+      height: 28px;
+      width: 28px;
       left: 3px;
       bottom: 3px;
       background: #f5f0e6;
       border-radius: 50%;
       transition: transform 0.2s;
-      font-size: 14px;
-      line-height: 24px;
+      font-size: 16px;
+      line-height: 28px;
       text-align: center;
     }
     .toggle-right .slider::before {
@@ -90,8 +92,8 @@
     #numerals {
       display: flex;
       flex-wrap: wrap;
-      gap: 1.5rem;
-      margin-top: 2rem;
+      gap: 1rem;
+      margin-top: 1.5rem;
       justify-content: center;
     }
     @keyframes focus-in {
@@ -104,18 +106,47 @@
       animation: focus-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     }
     figure svg {
-      width: 100px;
-      height: 110px;
+      width: 80px;
+      height: 96px;
       border-radius: 8px;
     }
     figcaption {
       margin-top: 0.5rem;
-      font-size: 1.2rem;
+      font-size: 1rem;
       color: #aaa;
     }
     .empty {
       color: #666;
       font-style: italic;
+    }
+
+    /* Larger screens */
+    @media (min-width: 576px) {
+      body {
+        padding: 2rem;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-right: 0;
+      }
+      input {
+        font-size: 1.5rem;
+        padding: 1rem;
+      }
+      .toggle {
+        top: -3rem;
+      }
+      figure svg {
+        width: 100px;
+        height: 120px;
+      }
+      figcaption {
+        font-size: 1.2rem;
+      }
+      #numerals {
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
     }
   </style>
 </head>
