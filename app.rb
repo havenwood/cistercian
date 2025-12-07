@@ -10,6 +10,12 @@ class App < Roda
   route do |router|
     router.root do
       @initial_input = router.params['n'] || ''
+      @initial_numerals = if @initial_input.empty?
+                            ''
+                          else
+                            numbers = extract_numbers(@initial_input)
+                            render_numerals(numbers, secret_mode: false)
+                          end
       view 'index'
     end
 

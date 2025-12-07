@@ -38,20 +38,20 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('number_input');
-
-    // Trigger initial render if there's a value from URL
-    if (input.value) {
-      htmx.trigger(input, 'input');
-    }
+    const secretMode = document.querySelector('[name="secret_mode"]');
 
     // Escape key clears input
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         input.value = '';
-        htmx.trigger(input, 'input');
+        htmx.ajax('POST', '/numerals', {
+          target: '#numerals',
+          swap: 'morph:innerHTML',
+          values: { input: '', secret_mode: secretMode.checked ? '1' : '0' }
+        });
       }
     });
   });
 </script>
 
-<div id="numerals"></div>
+<div id="numerals"><%= @initial_numerals %></div>

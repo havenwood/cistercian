@@ -115,6 +115,13 @@ class AppTest < Minitest::Test
     assert_includes last_response.body, 'value="1234"'
   end
 
+  def test_url_parameter_renders_numerals_on_initial_load
+    get '/?n=42'
+    assert last_response.ok?
+    assert_includes last_response.body, '<figcaption>42</figcaption>'
+    assert_includes last_response.body, '<svg'
+  end
+
   def test_url_parameter_handles_encoded_characters
     get '/?n=1%202%203'
     assert last_response.ok?
