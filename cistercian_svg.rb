@@ -2,7 +2,7 @@
 
 module CistercianSVG
   H = 45   # quadrant height (width is 30)
-  GAP = 16 # vertical gap between upper and lower quadrants
+  GAP = 22 # vertical gap (~half of H for balanced proportions)
 
   # Each digit as line segments: [[x1, y1, x2, y2], ...]
   GLYPHS = [
