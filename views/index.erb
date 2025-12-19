@@ -1,4 +1,29 @@
-<h1>Cistercian Numerals</h1>
+<h1><%= @system == 'basingstoke' ? 'Basingstoke Centesimals' : 'Cistercian Numerals' %></h1>
+
+<fieldset class="system-selector">
+  <label class="system-option">
+    <input type="radio" name="system" value="cistercian"
+      <%= @system == 'cistercian' ? 'checked' : '' %>
+      hx-post="/numerals"
+      hx-trigger="change"
+      hx-target="#numerals"
+      hx-swap="morph:innerHTML transition:true"
+      hx-include="[name='input'], [name='secret_mode']"
+      onchange="updateSystem()">
+    <span>Cistercian</span>
+  </label>
+  <label class="system-option">
+    <input type="radio" name="system" value="basingstoke"
+      <%= @system == 'basingstoke' ? 'checked' : '' %>
+      hx-post="/numerals"
+      hx-trigger="change"
+      hx-target="#numerals"
+      hx-swap="morph:innerHTML transition:true"
+      hx-include="[name='input'], [name='secret_mode']"
+      onchange="updateSystem()">
+    <span>Basingstoke</span>
+  </label>
+</fieldset>
 
 <search class="controls">
   <div class="input-wrapper">
@@ -8,14 +33,14 @@
       name="input"
       id="number_input"
       value="<%= @initial_input %>"
-      placeholder="42,789,9999"
+      placeholder="<%= @system == 'basingstoke' ? '42, 78, 99' : '42, 789, 9999' %>"
       aria-describedby="input-hint"
       hx-post="/numerals"
       hx-trigger="input changed delay:100ms"
       hx-target="#numerals"
       hx-swap="morph:innerHTML transition:true"
       hx-sync="this:replace"
-      hx-include="[name='secret_mode']"
+      hx-include="[name='secret_mode'], [name='system']:checked"
       autocomplete="one-time-code"
       autocorrect="off"
       autocapitalize="off"
@@ -25,7 +50,10 @@
       autofocus
     >
   </div>
-  <small id="input-hint">Up to four digits per numeral, any separator</small>
+  <small id="input-hint">
+    <span class="hint-cistercian">Up to four digits per numeral</span>
+    <span class="hint-basingstoke">Up to two digits per numeral</span>
+  </small>
   <label class="toggle toggle-right">
     <input type="checkbox" name="secret_mode" value="1"
       aria-label="Secret mode"
@@ -33,7 +61,7 @@
       hx-trigger="change"
       hx-target="#numerals"
       hx-swap="morph:innerHTML transition:true"
-      hx-include="[name='input']"
+      hx-include="[name='input'], [name='system']:checked"
       onchange="toggleSecretMode()"
     >
     <span class="slider"></span>
@@ -46,7 +74,17 @@
     input.classList.toggle('hidden-text', secret);
   }
 
+  function updateSystem() {
+    const system = document.querySelector('[name="system"]:checked').value;
+    const isBasingstoke = system === 'basingstoke';
+    document.body.classList.toggle('system-basingstoke', isBasingstoke);
+    document.querySelector('h1').textContent = isBasingstoke ? 'Basingstoke Centesimals' : 'Cistercian Numerals';
+    document.getElementById('number_input').placeholder = isBasingstoke ? '42, 78, 99' : '42, 789, 9999';
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    // Set initial system class
+    updateSystem();
     const input = document.getElementById('number_input');
     const secretMode = document.querySelector('[name="secret_mode"]');
 
@@ -87,10 +125,11 @@
       if (e.key === 'Escape') {
         input.value = '';
         updateHint();
+        const system = document.querySelector('[name="system"]:checked').value;
         htmx.ajax('POST', '/numerals', {
           target: '#numerals',
           swap: 'morph:innerHTML transition:true',
-          values: { input: '', secret_mode: secretMode.checked ? '1' : '0' }
+          values: { input: '', secret_mode: secretMode.checked ? '1' : '0', system }
         });
       }
     });

@@ -70,29 +70,29 @@ class AppTest < Minitest::Test
     refute_includes last_response.body, '<figcaption>'
   end
 
-  def test_secret_mode_still_renders_svg
+  def test_secret_mode_still_renders_figure
     post '/numerals', input: '1234', secret_mode: '1'
     assert last_response.ok?
-    assert_includes last_response.body, '<svg'
+    assert_includes last_response.body, '<img src="/svg/cistercian/1234.svg"'
     assert_includes last_response.body, '<figure'
   end
 
-  def test_empty_input_returns_empty
+  def test_empty_input_returns_no_figures
     post '/numerals', input: ''
     assert last_response.ok?
-    assert_equal '', last_response.body.strip
+    refute_includes last_response.body, '<figure'
   end
 
-  def test_non_digit_input_returns_empty
+  def test_non_digit_input_returns_no_figures
     post '/numerals', input: 'abc'
     assert last_response.ok?
-    assert_equal '', last_response.body.strip
+    refute_includes last_response.body, '<figure'
   end
 
-  def test_renders_svg_for_each_numeral
+  def test_renders_figure_for_each_numeral
     post '/numerals', input: '1 2 3'
     assert last_response.ok?
-    assert_equal 3, last_response.body.scan('<svg').count
+    assert_equal 3, last_response.body.scan('<figure').count
   end
 
   def test_figure_ids_are_sequential
@@ -119,7 +119,7 @@ class AppTest < Minitest::Test
     get '/?n=42'
     assert last_response.ok?
     assert_includes last_response.body, '<figcaption>42</figcaption>'
-    assert_includes last_response.body, '<svg'
+    assert_includes last_response.body, '<img src="/svg/cistercian/42.svg"'
   end
 
   def test_url_parameter_handles_encoded_characters

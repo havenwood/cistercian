@@ -72,6 +72,6 @@ module CistercianSVG
 end
 
 if __FILE__ == $PROGRAM_NAME
-  number = (ARGV[0] || 1234).to_i
+  number = ARGV.fetch(0, 1234).to_i
   puts CistercianSVG.svg(number)
 end

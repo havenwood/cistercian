@@ -144,6 +144,55 @@
     #input-hint.faded {
       opacity: 0;
     }
+    .hint-basingstoke {
+      display: none;
+    }
+    body.system-basingstoke .hint-cistercian {
+      display: none;
+    }
+    body.system-basingstoke .hint-basingstoke {
+      display: inline;
+    }
+    .system-selector {
+      display: flex;
+      gap: 0;
+      border: none;
+      padding: 0;
+      margin: 0 auto 1.5rem;
+      justify-content: center;
+    }
+    .system-option {
+      position: relative;
+      cursor: pointer;
+    }
+    .system-option input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .system-option span {
+      display: block;
+      padding: 0.5rem 1rem;
+      background: var(--border);
+      color: var(--text-muted);
+      transition: background 0.2s, color 0.2s;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+    .system-option:first-child span {
+      border-radius: 8px 0 0 8px;
+    }
+    .system-option:last-child span {
+      border-radius: 0 8px 8px 0;
+    }
+    .system-option input:checked + span {
+      background: var(--accent);
+      color: var(--text);
+    }
+    .system-option input:focus-visible + span {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
     .controls {
       position: relative;
     }
