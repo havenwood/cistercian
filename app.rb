@@ -9,67 +9,42 @@ class App < Roda
   plugin :render
   plugin :class_matchers
 
-  route do |router|
-    router.root do
-      @initial_input = router.params.fetch('n', '')
-      @system = router.params.fetch('system', 'cistercian')
-      @system = 'cistercian' unless %w[cistercian basingstoke].include?(@system)
+  SYSTEMS = {
+    'cistercian' => {range: 0..9999, renderer: CistercianSVG},
+    'basingstoke' => {range: 0..99, renderer: BasingstokeSVG}
+  }.freeze
+
+  route do |r|
+    r.root do
+      @initial_input = r.params.fetch('n', '')
+      @system = r.params.fetch('system', 'cistercian')
+      @orientation = r.params.fetch('orientation', 'vertical')
+      @hidden = r.params['hidden'] == '1'
 
       if @initial_input.empty?
         @initial_numerals = ''
         @initial_backdrop = ''
       else
         numbers = extract_numbers(@initial_input, system: @system)
-        @initial_numerals = render_numerals(numbers, secret_mode: false, system: @system)
-        @initial_backdrop = render_backdrop(@initial_input, secret_mode: false, system: @system)
+        @initial_numerals = render_numerals(numbers, secret_mode: @hidden, system: @system)
+        @initial_backdrop = render_backdrop(@initial_input, secret_mode: @hidden, system: @system)
       end
       view 'index'
     end
 
-    router.on 'svg' do
-      router.on 'cistercian' do
-        router.is String do |filename|
-          next unless (match = filename.match(/\A(\d+)\.svg\z/))
-
-          number = match[1].to_i
-          next unless (0..9999).cover?(number)
-
-          response['Content-Type'] = 'image/svg+xml'
-          response['Content-Disposition'] = "inline; filename=\"cistercian-#{number}.svg\""
-          response['Cache-Control'] = 'public, max-age=14400'
-          CistercianSVG.svg(number)
-        end
-      end
-
-      router.on 'basingstoke' do
-        router.is String do |filename|
-          next unless (match = filename.match(/\A(\d+)\.svg\z/))
-
-          number = match[1].to_i
-          next unless (0..99).cover?(number)
-
-          response['Content-Type'] = 'image/svg+xml'
-          response['Content-Disposition'] = "inline; filename=\"basingstoke-#{number}.svg\""
-          response['Cache-Control'] = 'public, max-age=14400'
-          BasingstokeSVG.svg(number)
-        end
-      end
+    r.on 'svg', String, String do |system, filename|
+      serve_svg(system, filename)
     end
 
-    router.post 'numerals' do
-      input = router.params.fetch('input', '')
-      secret_mode = router.params['secret_mode'] == '1'
-      system = router.params.fetch('system', 'cistercian')
-      system = 'cistercian' unless %w[cistercian basingstoke].include?(system)
+    r.post 'numerals' do
+      input = r.params.fetch('input', '')
+      secret_mode = r.params['secret_mode'] == '1'
+      system = r.params.fetch('system', 'cistercian')
+      orientation = r.params.fetch('orientation', 'vertical')
 
       numbers = extract_numbers(input, system:)
 
-      # Update browser URL without adding history entry
-      url_params = []
-      url_params << "n=#{URI.encode_www_form_component(input)}" unless input.empty?
-      url_params << 'system=basingstoke' if system == 'basingstoke'
-      url = url_params.empty? ? '/' : "/?#{url_params.join('&')}"
-      response['HX-Replace-Url'] = url
+      response['HX-Replace-Url'] = build_url(input:, system:, orientation:, hidden: secret_mode)
 
       numerals = render_numerals(numbers, secret_mode:, system:)
       backdrop = render_backdrop(input, secret_mode:, system:)
@@ -83,6 +58,30 @@ class App < Roda
 
   private
 
+  def build_url(input:, system:, orientation:, hidden:)
+    params = {
+      n: (input unless input.empty?),
+      system: ('basingstoke' if system == 'basingstoke'),
+      orientation: ('horizontal' if orientation == 'horizontal'),
+      hidden: (1 if hidden)
+    }.compact
+    params.empty? ? '/' : "/?#{URI.encode_www_form(params)}"
+  end
+
+  def serve_svg(system, filename)
+    config = SYSTEMS[system]
+    return unless config
+    return unless (match = filename.match(/\A(\d+)\.svg\z/))
+
+    number = match[1].to_i
+    return unless config[:range].cover?(number)
+
+    response['Content-Type'] = 'image/svg+xml'
+    response['Content-Disposition'] = %(inline; filename="#{system}-#{number}.svg")
+    response['Cache-Control'] = 'public, max-age=14400'
+    config[:renderer].svg(number)
+  end
+
   def extract_numbers(input, system:)
     input.scan(/\d+/).flat_map { |digits| chunk_digits(digits, system:) }
   end
@@ -90,14 +89,12 @@ class App < Roda
   def chunk_digits(digits, system:)
     max_digits = system == 'basingstoke' ? 2 : 4
 
-    # Extract leading zeros from the entire input first
     leading_zeros_count = digits.match(/^0*/)[0].length
     remainder = digits.sub(/^0+/, '')
 
     leading_zeros = Array.new(leading_zeros_count, 0)
     return leading_zeros if remainder.empty?
 
-    # Zeros act as separators; non-zero sequences chunk up to max_digits
     pattern = /0+|[1-9]\d{0,#{max_digits - 1}}/
     parts = remainder.scan(pattern)
     expanded = parts.flat_map do |part|

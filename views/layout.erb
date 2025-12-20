@@ -74,27 +74,29 @@
       border-color: var(--accent);
       box-shadow: 0 0 8px var(--accent-glow);
     }
+    .input-wrapper input[type="search"]::-webkit-search-decoration,
+    .input-wrapper input[type="search"]::-webkit-search-cancel-button,
+    .input-wrapper input[type="search"]::-webkit-search-results-button,
+    .input-wrapper input[type="search"]::-webkit-search-results-decoration {
+      -webkit-appearance: none;
+      display: none;
+    }
     #input_backdrop span.glow {
       animation: text-glow 2s ease-out;
     }
     @keyframes text-glow {
-      0% {
+      from {
         text-shadow: 0 0 8px var(--parchment), 0 0 16px var(--accent);
-        -webkit-filter: drop-shadow(0 0 4px var(--accent));
         filter: drop-shadow(0 0 4px var(--accent));
       }
-      100% {
+      to {
         text-shadow: none;
-        -webkit-filter: none;
         filter: none;
       }
     }
     #input_backdrop {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      inset: 0;
       padding: clamp(0.75rem, 2vw, 1rem);
       font-family: ui-monospace, monospace;
       font-size: max(16px, clamp(1.1rem, 2.5vw, 1.35rem));
@@ -196,54 +198,97 @@
     .controls {
       position: relative;
     }
-    .toggle {
+    .secret-toggle {
       position: absolute;
-      top: clamp(-2.5rem, -5vw, -3rem);
-      width: 60px;
-      height: 34px;
+      right: 0;
+      top: clamp(-2.75rem, -5.5vw, -3.25rem);
       cursor: pointer;
     }
-    .toggle input {
+    .secret-toggle input {
+      position: absolute;
       opacity: 0;
       width: 0;
       height: 0;
     }
-    .toggle input:focus-visible + .slider {
+    .secret-toggle span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      background: var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      transition: background 0.2s;
+      font-size: 18px;
+    }
+    .secret-toggle span::before {
+      content: '\1F435';
+    }
+    .secret-toggle input:checked + span {
+      background: var(--accent);
+    }
+    .secret-toggle input:checked + span::before {
+      content: '\1F648';
+    }
+    .secret-toggle input:focus-visible + span {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
     }
-    .slider {
+    .orientation-toggle {
       position: absolute;
-      inset: 0;
+      left: 0;
+      top: clamp(-2.75rem, -5.5vw, -3.25rem);
+      display: flex;
+      gap: 0;
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+    .orientation-toggle label {
+      cursor: pointer;
+    }
+    .orientation-toggle input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .orientation-toggle label > span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
       background: var(--border);
-      border-radius: 24px;
-      transition: background 0.2s;
+      color: var(--text-muted);
+      transition: background 0.2s, color 0.2s;
+      font-size: 18px;
     }
-    .slider::before {
-      position: absolute;
-      height: 28px;
-      width: 28px;
-      left: 3px;
-      bottom: 3px;
-      background: var(--parchment);
-      border-radius: 50%;
-      transition: transform 0.2s;
-      font-size: 16px;
-      line-height: 28px;
-      text-align: center;
+    .orientation-toggle label:first-child > span {
+      border-radius: 8px 0 0 8px;
     }
-    .toggle-right .slider::before {
-      content: '\1F435';
+    .orientation-toggle label:last-child > span {
+      border-radius: 0 8px 8px 0;
     }
-    .toggle input:checked + .slider {
+    .orientation-toggle input:checked + span {
       background: var(--accent);
+      color: var(--text);
     }
-    .toggle input:checked + .slider::before {
-      content: '\1F648';
-      transform: translateX(26px);
+    .orientation-toggle input:focus-visible + span {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
-    .toggle-right {
-      right: 0;
+    .icon-vertical, .icon-horizontal {
+      display: inline-block;
+      width: 12px;
+      height: 18px;
+      border: 2px solid currentColor;
+      border-radius: 2px;
+    }
+    .icon-horizontal {
+      width: 18px;
+      height: 12px;
     }
     #numerals {
       display: grid;
@@ -274,6 +319,10 @@
       width: 100%;
       aspect-ratio: 100 / 120;
       border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+    .rotated figure img {
+      transform: rotate(90deg) scale(0.92);
     }
     figcaption {
       margin-top: 0.5rem;

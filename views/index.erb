@@ -1,77 +1,93 @@
 <h1><%= @system == 'basingstoke' ? 'Basingstoke Centesimals' : 'Cistercian Numerals' %></h1>
 
-<fieldset class="system-selector">
-  <label class="system-option">
-    <input type="radio" name="system" value="cistercian"
-      <%= @system == 'cistercian' ? 'checked' : '' %>
-      hx-post="/numerals"
-      hx-trigger="change"
-      hx-target="#numerals"
-      hx-swap="morph:innerHTML transition:true"
-      hx-include="[name='input'], [name='secret_mode']"
-      onchange="updateSystem()">
-    <span>Cistercian</span>
-  </label>
-  <label class="system-option">
-    <input type="radio" name="system" value="basingstoke"
-      <%= @system == 'basingstoke' ? 'checked' : '' %>
-      hx-post="/numerals"
-      hx-trigger="change"
-      hx-target="#numerals"
-      hx-swap="morph:innerHTML transition:true"
-      hx-include="[name='input'], [name='secret_mode']"
-      onchange="updateSystem()">
-    <span>Basingstoke</span>
-  </label>
-</fieldset>
-
-<search class="controls">
-  <div class="input-wrapper">
-    <div id="input_backdrop" aria-hidden="true"><%= @initial_backdrop %></div>
-    <input
-      type="text"
-      name="input"
-      id="number_input"
-      value="<%= @initial_input %>"
-      placeholder="<%= @system == 'basingstoke' ? '42, 78, 99' : '42, 789, 9999' %>"
-      aria-describedby="input-hint"
-      hx-post="/numerals"
-      hx-trigger="input changed delay:100ms"
-      hx-target="#numerals"
-      hx-swap="morph:innerHTML transition:true"
-      hx-sync="this:replace"
-      hx-include="[name='secret_mode'], [name='system']:checked"
-      autocomplete="one-time-code"
-      autocorrect="off"
-      autocapitalize="off"
-      data-form-type="other"
-      data-lpignore="true"
-      spellcheck="false"
-      autofocus
-    >
+<form id="numeral-form" hx-target="#numerals" hx-swap="morph:innerHTML transition:true">
+  <div class="system-selector" role="radiogroup" aria-label="Numeral system">
+    <label class="system-option">
+      <input type="radio" name="system" value="cistercian"
+        <%= @system == 'cistercian' ? 'checked' : '' %>
+        hx-post="/numerals"
+        hx-trigger="change"
+        hx-on:change="updateSystem()">
+      <span>Cistercian</span>
+    </label>
+    <label class="system-option">
+      <input type="radio" name="system" value="basingstoke"
+        <%= @system == 'basingstoke' ? 'checked' : '' %>
+        hx-post="/numerals"
+        hx-trigger="change"
+        hx-on:change="updateSystem()">
+      <span>Basingstoke</span>
+    </label>
   </div>
-  <small id="input-hint">
-    <span class="hint-cistercian">Up to four digits per numeral</span>
-    <span class="hint-basingstoke">Up to two digits per numeral</span>
-  </small>
-  <label class="toggle toggle-right">
-    <input type="checkbox" name="secret_mode" value="1"
-      aria-label="Secret mode"
-      hx-post="/numerals"
-      hx-trigger="change"
-      hx-target="#numerals"
-      hx-swap="morph:innerHTML transition:true"
-      hx-include="[name='input'], [name='system']:checked"
-      onchange="toggleSecretMode()"
-    >
-    <span class="slider"></span>
-  </label>
-</search>
+
+  <search class="controls">
+    <div class="input-wrapper">
+      <div id="input_backdrop" aria-hidden="true"><%= @initial_backdrop %></div>
+      <input
+        type="search"
+        name="input"
+        id="number_input"
+        class="<%= @hidden ? 'hidden-text' : '' %>"
+        value="<%= @initial_input %>"
+        placeholder="<%= @system == 'basingstoke' ? '42, 78, 99' : '42, 789, 9999' %>"
+        aria-describedby="input-hint"
+        hx-post="/numerals"
+        hx-trigger="input changed delay:100ms, search"
+        hx-sync="this:replace"
+        hx-on:search="updateHint()"
+        autocomplete="one-time-code"
+        autocorrect="off"
+        autocapitalize="off"
+        data-form-type="other"
+        data-lpignore="true"
+        spellcheck="false"
+        autofocus
+      >
+    </div>
+    <small id="input-hint">
+      <span class="hint-cistercian">Up to four digits per numeral</span>
+      <span class="hint-basingstoke">Up to two digits per numeral</span>
+    </small>
+    <div class="orientation-toggle" role="radiogroup" aria-label="Orientation">
+      <label>
+        <input type="radio" name="orientation" value="vertical"
+          aria-label="Vertical"
+          <%= @orientation == 'vertical' ? 'checked' : '' %>
+          hx-post="/numerals"
+          hx-trigger="change"
+          hx-on:change="setOrientation('vertical')">
+        <span aria-hidden="true"><span class="icon-vertical"></span></span>
+      </label>
+      <label>
+        <input type="radio" name="orientation" value="horizontal"
+          aria-label="Horizontal"
+          <%= @orientation == 'horizontal' ? 'checked' : '' %>
+          hx-post="/numerals"
+          hx-trigger="change"
+          hx-on:change="setOrientation('horizontal')">
+        <span aria-hidden="true"><span class="icon-horizontal"></span></span>
+      </label>
+    </div>
+    <label class="secret-toggle">
+      <input type="checkbox" name="secret_mode" value="1"
+        aria-label="Secret mode"
+        <%= @hidden ? 'checked' : '' %>
+        hx-post="/numerals"
+        hx-trigger="change"
+        hx-on:change="toggleSecretMode()">
+      <span aria-hidden="true"></span>
+    </label>
+  </search>
+</form>
 <script>
   function toggleSecretMode() {
     const input = document.getElementById('number_input');
     const secret = document.querySelector('[name="secret_mode"]').checked;
     input.classList.toggle('hidden-text', secret);
+  }
+
+  function setOrientation(orientation) {
+    document.getElementById('numerals').classList.toggle('rotated', orientation === 'horizontal');
   }
 
   function updateSystem() {
@@ -82,21 +98,24 @@
     document.getElementById('number_input').placeholder = isBasingstoke ? '42, 78, 99' : '42, 789, 9999';
   }
 
+  function updateHint() {
+    const input = document.getElementById('number_input');
+    const hint = document.getElementById('input-hint');
+    hint.classList.toggle('faded', input.value.length > 0);
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
-    // Set initial system class
     updateSystem();
     const input = document.getElementById('number_input');
     const secretMode = document.querySelector('[name="secret_mode"]');
 
     // Reduce iOS Safari scroll jank on touch devices
     if (window.matchMedia('(pointer: coarse)').matches) {
-      input.setAttribute('hx-trigger', 'input changed delay:400ms');
+      input.setAttribute('hx-trigger', 'input changed delay:400ms, search');
       htmx.process(input);
     }
 
     // Fade hint after typing
-    const hint = document.getElementById('input-hint');
-    const updateHint = () => hint.classList.toggle('faded', input.value.length > 0);
     input.addEventListener('input', updateHint);
     updateHint();
 
@@ -120,23 +139,9 @@
       event.preventDefault();
     });
 
-    // Escape key clears input
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        input.value = '';
-        updateHint();
-        const system = document.querySelector('[name="system"]:checked').value;
-        htmx.ajax('POST', '/numerals', {
-          target: '#numerals',
-          swap: 'morph:innerHTML transition:true',
-          values: { input: '', secret_mode: secretMode.checked ? '1' : '0', system }
-        });
-      }
-    });
-
     // Glow corresponding digits when clicking a numeral
-    document.getElementById('numerals').addEventListener('click', (e) => {
-      const figure = e.target.closest('figure');
+    document.getElementById('numerals').addEventListener('click', (event) => {
+      const figure = event.target.closest('figure');
       if (figure) {
         const index = figure.id.replace('fig-', '');
         const span = document.querySelector(`#input_backdrop [data-chunk="${index}"]`);
@@ -152,4 +157,4 @@
   });
 </script>
 
-<main id="numerals"><%= @initial_numerals %></main>
+<main id="numerals" class="<%= @orientation == 'horizontal' ? 'rotated' : '' %>"><%= @initial_numerals %></main>
