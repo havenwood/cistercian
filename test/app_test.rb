@@ -145,4 +145,12 @@ class AppTest < Minitest::Test
     assert last_response.ok?
     assert_equal '/?n=1+2+3', last_response.headers['HX-Replace-Url']
   end
+
+  def test_robots_txt
+    get '/robots.txt'
+    assert last_response.ok?
+    assert_equal 'text/plain', last_response.content_type
+    assert_includes last_response.body, 'User-agent: *'
+    assert_includes last_response.body, 'Allow: /'
+  end
 end

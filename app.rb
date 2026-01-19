@@ -15,6 +15,15 @@ class App < Roda
   }.freeze
 
   route do |r|
+    r.get 'robots.txt' do
+      response['Content-Type'] = 'text/plain'
+      response['Cache-Control'] = 'public, max-age=86400'
+      <<~TXT
+        User-agent: *
+        Allow: /
+      TXT
+    end
+
     r.root do
       @initial_input = r.params.fetch('n', '')
       @system = r.params.fetch('system', 'cistercian')
